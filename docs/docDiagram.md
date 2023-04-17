@@ -2,7 +2,7 @@
 
 ## Legend
 ```mermaid
-graph LR
+flowchart LR
     data{{Data}}:::data
     timeline{{Timeline<br/>HIPO files}}:::timeline
     exeSlurm[Script automated<br/>by exeSlurm.sh]:::exeSlurm
@@ -21,7 +21,7 @@ graph LR
 ## Automatic QA Procedure
 
 ```mermaid
-graph TD
+flowchart TD
     dst{{DSTs}}:::data --> monitorRead[monitorRead.groovy]:::exeSlurm
     monitorRead --> monitorReadOut{{outdat/data_table_$run.dat<br>outmon/monitor_$run.hipo}}:::data
     monitorReadOut --> do[datasetOrganize.sh]:::exeTimeline
@@ -38,7 +38,7 @@ graph TD
     man --> qaCut
     qaCut --> tl
     qaCut --> qaTree{{outdat.$dataset/qaTree.json}}:::data
-    qaTree --> cd[QA subdirectory]
+    qaTree --> cd[Manual QA<br/>in QA subdirectory]
     dt --> buildCT[buildChargeTree.groovy]:::exeTimeline
     buildCT --> chargeTree{{outdat.$dataset/chargeTree.json}}:::data
     
@@ -57,7 +57,7 @@ graph TD
 - all scripts are run manually here (except `parseQAtree.groovy`, which runs automatically)
 
 ```mermaid
-graph TD
+flowchart TD
    cd0[cd QA]:::manual-->qaTree
    qaTree{{../outdat.$dataset/qaTree.json}}:::data --> import[import.sh]:::exeQA
     import --> qaLoc{{qa/ -> qa.$dataset/<br>qa/qaTree.json}}:::data
