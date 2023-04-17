@@ -7,15 +7,15 @@ flowchart LR
     timeline{{Timeline<br/>HIPO files}}:::timeline
     exeSlurm[Script automated<br/>by exeSlurm.sh]:::exeSlurm
     exeTimeline[Script automated<br/>by exeTimelines.sh]:::exeTimeline
-    exeQA[Script automated<br/>by exeQAtimelines.sh]:::exeQA
     manual[Manual step,<br/>not automated]:::manual
+    qaScript[Manual QA script,<br/>not automated]:::qaScript
 
     classDef data fill:#ff8,color:black
     classDef exeSlurm fill:#8f8,color:black
     classDef exeTimeline fill:#bff,color:black
     classDef manual fill:#fbb,color:black
     classDef timeline fill:#8af,color:black
-    classDef exeQA fill:#f8f,color:black
+    classDef qaScript fill:#f8f,color:black
 ```
 
 ## Automatic QA Procedure
@@ -49,40 +49,41 @@ flowchart TD
     classDef exeTimeline fill:#bff,color:black
     classDef manual fill:#fbb,color:black
     classDef timeline fill:#8af,color:black
-    classDef exeQA fill:#f8f,color:black
+    classDef qaScript fill:#f8f,color:black
 ```
 
-# Manual QA
-### Note: `cd` to the `QA` subdirectory
-- all scripts are run manually here (except `parseQAtree.groovy`, which runs automatically)
+## Manual QA Procedure
+- `cd` to the `QA` subdirectory; scripts are run manually here
+  - except for `parseQAtree.groovy`, which runs automatically
+  - except for `exeQAtimelines.sh`, which is meant to be run as one of the final steps
 
 ```mermaid
 flowchart TD
    cd0[cd QA]:::manual-->qaTree
-   qaTree{{../outdat.$dataset/qaTree.json}}:::data --> import[import.sh]:::exeQA
+   qaTree{{../outdat.$dataset/qaTree.json}}:::data --> import[import.sh]:::qaScript
     import --> qaLoc{{qa/ -> qa.$dataset/<br>qa/qaTree.json}}:::data
-    qaLoc --> parse[parseQAtree.groovy<br>called automatically<br>whenever needed]:::exeQA
+    qaLoc --> parse[parseQAtree.groovy<br>called automatically<br>whenever needed]:::qaScript
     parse --> qaTable{{qa/qaTable.dat}}:::data
     
     qaLoc --> inspect[manual inspection<br>- view qaTable.dat<br>- view online monitor]:::manual
     inspect --> edit{edit?}
     
-    edit -->|yes|modify[modify.sh]:::exeQA
+    edit -->|yes|modify[modify.sh]:::qaScript
     modify --> qaLoc
     modify --> qaBak{{qa.$dataset/qaTree.json.*.bak}}:::data
-    qaBak --> undo[if needed, revert<br>modification with<br>undo.sh]:::exeQA
+    qaBak --> undo[if needed, revert<br>modification with<br>undo.sh]:::qaScript
     
-    edit -->|no|cd[cd ..]:::exeQA
-    cd --> qa[exeQAtimelines.sh]:::exeQA
+    edit -->|no|cd[cd ..]:::qaScript
+    cd --> qa[exeQAtimelines.sh]:::qaScript
     qaLoc --> qa
     qa --> qaTL{{outmon.$dataset.qa/$timeline.hipo}}:::timeline
     qa -->|updates|qaTree
-    qaTL --> deploy[deployTimelines.sh]:::exeQA
-    deploy --> release[releaseTimelines.sh]:::exeQA
+    qaTL --> deploy[deployTimelines.sh]:::qaScript
+    deploy --> release[releaseTimelines.sh]:::qaScript
     qaTree --> release
     
     classDef data fill:#ff8,color:black
     classDef manual fill:#fbb,color:black
     classDef timeline fill:#8af,color:black
-    classDef exeQA fill:#f8f,color:black
+    classDef qaScript fill:#f8f,color:black
 ```
